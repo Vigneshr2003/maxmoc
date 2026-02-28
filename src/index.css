@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════
+   DARK INDUSTRIAL GLASSMORPHISM THEME
+   ══════════════════════════════════════════════════ */
+
+/* ── Theme tokens (CSS custom properties) ── */
+:root {
+  --bg-primary:    #0b0f19;
+  --bg-secondary:  #111827;
+  --glass-bg:      rgba(17, 24, 39, 0.60);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --glass-hover:   rgba(255, 255, 255, 0.12);
+  --accent-cyan:   #06b6d4;
+  --accent-teal:   #14b8a6;
+  --accent-indigo: #818cf8;
+  --glow-cyan:     rgba(6, 182, 212, 0.35);
+  --glow-teal:     rgba(20, 184, 166, 0.30);
+  --glow-rose:     rgba(244, 63, 94, 0.30);
+  --glow-amber:    rgba(245, 158, 11, 0.30);
+  --glow-indigo:   rgba(129, 140, 248, 0.30);
+  --glow-blue:     rgba(59, 130, 246, 0.30);
+}
+
+/* ── Entry animations ── */
+@layer utilities {
+  .animate-in {
+    animation: animate-in 0.5s ease-out;
+  }
+  .fade-in {
+    animation-name: fade-in;
+  }
+}
+
+@keyframes animate-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Glow pulse animation for accents ── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px 0 var(--glow-color, var(--glow-cyan)); }
+  50%      { box-shadow: 0 0 30px 5px var(--glow-color, var(--glow-cyan)); }
+}
+
+/* ── Shimmer sweep for card borders ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ══════════════════════════════════════════════════
+   BODY — Deep gradient + tech grid + background image
+   ══════════════════════════════════════════════════ */
+body {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+/* Content above overlays */
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   GLASS CARD UTILITIES
+   ══════════════════════════════════════════════════ */
+@layer utilities {
+  /* Main content panels, tables, forms */
+  .surface-card {
+    background: rgba(15, 23, 42, 0.6); /* slate-900/60 */
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(30, 41, 59, 0.8); /* slate-800/80 */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Smaller floating metrics, badges */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(17, 24, 39, 0.72);
+    border-color: var(--glass-hover);
+  }
+
+  /* Gradient accent top-border (2px colored line at the top of a card) */
+  .accent-top-cyan {
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, var(--accent-cyan), var(--accent-teal)) 1;
+  }
+
+  .accent-top-orange {
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #f97316, #ef4444) 1;
+  }
+
+  .accent-top-indigo {
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #818cf8, #6366f1) 1;
+  }
+
+  .accent-top-blue {
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #3b82f6, #06b6d4) 1;
+  }
+
+  .accent-top-emerald {
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #10b981, #14b8a6) 1;
+  }
+}
