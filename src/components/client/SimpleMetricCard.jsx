@@ -7,7 +7,7 @@ export default function SimpleMetricCard({ label, value, unit }) {
     <motion.div
       variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
       style={{ "--glow-color": "var(--glow-cyan)" }}
-      className="glass-card accent-top-cyan rounded-2xl p-6 flex flex-col justify-between hover:shadow-[0_0_20px_0_var(--glow-color)] transition-all duration-300"
+      className="h-full w-full min-h-[160px] rounded-xl p-5 flex flex-col justify-between bg-white/2 border border-white/6 hover:border-white/10 transition-colors duration-300"
     >
       <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
         {label}

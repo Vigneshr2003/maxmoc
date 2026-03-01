@@ -30,58 +30,65 @@ export default function PressureCard({ value }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}
       style={{ "--glow-color": glowVar }}
-      className="col-span-1 glass-card accent-top-indigo rounded-2xl p-6 flex flex-col items-center justify-center relative group hover:shadow-[0_0_25px_0_var(--glow-color)]"
+      className="h-full w-full rounded-xl p-5 flex flex-col justify-between relative bg-white/2 border border-white/6 hover:border-white/10 transition-colors duration-300"
     >
-      <div className="flex items-center justify-between w-full mb-4 absolute top-6 left-6 right-6">
+      <div className="flex items-center justify-between w-full mb-2 z-10">
         <h3 className="text-sm font-bold text-slate-400 tracking-wider uppercase flex items-center gap-2">
           <FiCloudLightning className={`w-5 h-5 ${colorClass}`} />
           Pressure
         </h3>
       </div>
 
-      <div className="relative flex items-center justify-center mt-10">
-        <svg className="w-32 h-32 transform -rotate-90">
-          <circle
-            cx="64"
-            cy="64"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth="8"
-            fill="transparent"
-            className="text-white/10"
-          />
-          <motion.circle
-            cx="64"
-            cy="64"
-            r={radius}
-            stroke={strokeColor}
-            strokeWidth="8"
-            fill="transparent"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            strokeLinecap="round"
-            style={{ filter: `drop-shadow(0 0 6px ${strokeColor})` }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <motion.span
-            key={value}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-2xl font-black text-white tracking-tight"
-          >
-            {Math.round(value)}
-          </motion.span>
-          <span className="text-xs font-semibold text-slate-500">hPa</span>
+      <div className="flex-1 flex flex-row items-center justify-between z-10 gap-2">
+        <div className="flex flex-col justify-center">
+          <div className="flex items-end gap-1">
+            <motion.span
+              key={value}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-4xl font-black text-white tracking-tight"
+            >
+              {Math.round(value)}
+            </motion.span>
+            <span className="text-sm font-semibold text-slate-500 mb-1">
+              hPa
+            </span>
+          </div>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-2">
+            {value > 1020 ? "High Pressure" : "Stable Pressure"}
+          </p>
         </div>
-      </div>
 
-      <div className="mt-4 text-center">
-        <p className="text-sm font-medium text-slate-400">
-          {value > 1020 ? "High Pressure" : "Stable Pressure"}
-        </p>
+        <div className="relative flex items-center justify-center w-24 h-24 shrink-0">
+          <svg
+            className="w-full h-full transform -rotate-90"
+            viewBox="0 0 128 128"
+          >
+            <circle
+              cx="64"
+              cy="64"
+              r={radius}
+              stroke="currentColor"
+              strokeWidth="8"
+              fill="transparent"
+              className="text-white/10"
+            />
+            <motion.circle
+              cx="64"
+              cy="64"
+              r={radius}
+              stroke={strokeColor}
+              strokeWidth="8"
+              fill="transparent"
+              strokeDasharray={circumference}
+              initial={{ strokeDashoffset: circumference }}
+              animate={{ strokeDashoffset }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              strokeLinecap="round"
+              style={{ filter: `drop-shadow(0 0 6px ${strokeColor})` }}
+            />
+          </svg>
+        </div>
       </div>
     </motion.div>
   );

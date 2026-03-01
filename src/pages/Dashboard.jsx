@@ -3,12 +3,20 @@ import { useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
 import StatusSection from "../components/client/StatusSection";
-import MetricsGrid from "../components/client/MetricsGrid";
+import SpeedCard from "../components/client/SpeedCard";
+import TemperatureCard from "../components/client/TemperatureCard";
+import PressureCard from "../components/client/PressureCard";
+import HumidityCard from "../components/client/HumidityCard";
+import SimpleMetricCard from "../components/client/SimpleMetricCard";
+import { getMetricLabel } from "../config/metricsConfig";
 import {
   FiCheckCircle,
   FiAlertTriangle,
   FiAlertOctagon,
   FiLayers,
+  FiActivity,
+  FiWind,
+  FiThermometer,
 } from "react-icons/fi";
 
 export default function Dashboard() {
@@ -92,47 +100,197 @@ export default function Dashboard() {
 
   const industry = activeUser?.industry;
 
+  // Helper: check if a metric is enabled
+  // If enabledMetrics is empty, show all (fallback for admin preview)
+  const show = (key) => !enabledMetrics.length || enabledMetrics.includes(key);
+
+  // Section visibility — only render a group if at least one metric is enabled
+  const hasEngine = show("speed") || show("pressure");
+  const hasThermal = show("temperature") || show("coolantTemp");
+  const hasEnvironment = show("humidity") || show("co2") || show("no2");
+
+  /* ── Reusable section header ── */
+  const SectionHeader = ({ icon: Icon, label, color }) => (
+    <div className="flex items-center gap-2 px-1 mt-1">
+      <Icon className={`w-3.5 h-3.5 ${color}`} />
+      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-white/5" />
+    </div>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6 md:space-y-8 pb-8"
+      className="flex flex-col gap-5 pb-6"
     >
-      {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-            {displayName}'s Dashboard
-          </h1>
+      {/* ── Top Bar: Header + Status Strip ── */}
+      <div className="flex flex-col gap-3">
+        {/* Header row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {displayName}'s Command Center
+            </h1>
+            {industry && (
+              <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-cyan-500/20 bg-cyan-500/5">
+                <FiLayers className="w-3 h-3 text-cyan-400" />
+                <span className="text-[10px] font-semibold text-cyan-300 tracking-wide uppercase">
+                  {industry}
+                </span>
+              </div>
+            )}
+          </div>
 
-          {/* Industry badge — glowing cyan glass pill */}
-          {industry && (
-            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass-card border border-cyan-500/30">
-              <FiLayers className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="text-xs font-semibold text-cyan-300 tracking-wide">
-                {industry}
-              </span>
-            </div>
-          )}
-
-          <p className="text-slate-400 mt-2 font-medium">
-            Live environment and engine telemetry.
-          </p>
+          {/* Live indicator */}
+          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+            </span>
+            Live • {lastUpdated}
+          </div>
         </div>
 
-        {/* Live indicator */}
-        <div className="flex items-center text-slate-400 font-medium">
-          <span className="relative flex h-2.5 w-2.5 mr-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
-          </span>
-          Live Data • {lastUpdated}
-        </div>
+        {/* System Status Strip */}
+        <StatusSection statusTheme={statusTheme} engineStatus={engineStatus} />
       </div>
 
-      <StatusSection statusTheme={statusTheme} engineStatus={engineStatus} />
-      <MetricsGrid data={data} enabledMetrics={enabledMetrics} />
+      {/* ════════════════════════════════════════════════════════
+          Section 1 — ENGINE PERFORMANCE
+          Speed (full width) + Pressure (below)
+         ════════════════════════════════════════════════════════ */}
+      {hasEngine && (
+        <div className="flex flex-col gap-3">
+          <SectionHeader
+            icon={FiActivity}
+            label="Engine Performance"
+            color="text-cyan-400"
+          />
+
+          {/* Speed — full width hero card */}
+          {show("speed") && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <SpeedCard value={data.speed} data={data} />
+            </motion.div>
+          )}
+
+          {/* Pressure — sits below speed */}
+          {show("pressure") && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="min-h-[180px]"
+            >
+              <PressureCard value={data.pressure} data={data} />
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════
+          Section 2 — THERMAL MONITORING
+          Temperature + Coolant Temp side-by-side
+         ════════════════════════════════════════════════════════ */}
+      {hasThermal && (
+        <div className="flex flex-col gap-3">
+          <SectionHeader
+            icon={FiThermometer}
+            label="Thermal Monitoring"
+            color="text-amber-400"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {show("temperature") && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="min-h-[200px]"
+              >
+                <TemperatureCard value={data.temperature} data={data} />
+              </motion.div>
+            )}
+            {show("coolantTemp") && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="min-h-[200px]"
+              >
+                <SimpleMetricCard
+                  label={getMetricLabel("coolantTemp")}
+                  value={data.coolantTemp}
+                  unit="°C"
+                />
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════
+          Section 3 — ENVIRONMENTAL
+          Humidity + CO₂ + NO₂ in a 3-column row
+         ════════════════════════════════════════════════════════ */}
+      {hasEnvironment && (
+        <div className="flex flex-col gap-3">
+          <SectionHeader
+            icon={FiWind}
+            label="Environmental"
+            color="text-emerald-400"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {show("humidity") && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="min-h-[180px]"
+              >
+                <HumidityCard value={data.humidity} data={data} />
+              </motion.div>
+            )}
+            {show("co2") && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="min-h-[180px]"
+              >
+                <SimpleMetricCard
+                  label={getMetricLabel("co2")}
+                  value={data.co2}
+                  unit="ppm"
+                />
+              </motion.div>
+            )}
+            {show("no2") && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="min-h-[180px]"
+              >
+                <SimpleMetricCard
+                  label={getMetricLabel("no2")}
+                  value={data.no2}
+                  unit="ppb"
+                />
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

@@ -28,7 +28,12 @@ export default function Login() {
     );
 
     if (foundUser) {
-      login({ username: foundUser.username, role: foundUser.role });
+      login({
+        username: foundUser.username,
+        role: foundUser.role,
+        enabledMetrics: foundUser.enabledMetrics ?? [],
+        industry: foundUser.industry ?? "",
+      });
       navigate(`/${foundUser.role}`);
     } else {
       setError("Invalid username or password");

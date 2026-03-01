@@ -25,10 +25,10 @@ export default function TemperatureCard({ value }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
       style={{ "--glow-color": glowVar }}
-      className="col-span-1 row-span-2 glass-card accent-top-orange rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:shadow-[0_0_25px_0_var(--glow-color)]"
+      className="h-full w-full rounded-xl p-5 flex flex-col relative overflow-hidden bg-white/2 border border-white/6 hover:border-white/10 transition-colors duration-300"
     >
-      {/* Subtle background glow */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-linear-to-br from-orange-500/20 to-transparent" />
+      {/* Subtle top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-orange-500/40 to-transparent" />
 
       <div className="flex items-center justify-between w-full mb-6 z-10">
         <h3 className="text-sm font-bold text-slate-400 tracking-wider uppercase flex items-center gap-2">

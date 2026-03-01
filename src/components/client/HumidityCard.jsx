@@ -11,11 +11,10 @@ export default function HumidityCard({ value }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.4 }}
       style={{ "--glow-color": "var(--glow-blue)" }}
-      className="col-span-1 md:col-span-2 lg:col-span-1 relative overflow-hidden rounded-2xl p-6 glass-card accent-top-blue group hover:-translate-y-1 hover:shadow-[0_0_25px_0_var(--glow-color)] transition-all duration-300"
+      className="h-full w-full relative overflow-hidden rounded-xl p-5 bg-white/2 border border-white/6 hover:border-white/10 transition-colors duration-300"
     >
-      {/* Decorative glassmorphism elements */}
-      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors duration-500" />
-      <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/15 transition-colors duration-500" />
+      {/* Subtle top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/40 to-transparent" />
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex items-center justify-between w-full mb-6">
